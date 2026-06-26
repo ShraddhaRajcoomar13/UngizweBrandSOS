@@ -29,7 +29,7 @@ $stmt->bind_param("ss", $brand, $cry);
 
 // Execute
 if ($stmt->execute()) {
-    header("Location: index.html");
+    header("Location: http://localhost//UngizweBrandSOS/listing.php");
     exit();
 } else {
     echo "Error: " . $stmt->error;
