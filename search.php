@@ -1,67 +1,29 @@
 <?php
-// listing.php - Ungizwe Brand Intelligence Listing
-
 $conn = new mysqli("localhost", "root", "", "ungizwedb");
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-/* -------------------------
-   INPUTS
---------------------------*/
-$search      = trim($_GET['search'] ?? '');
-$sort        = $_GET['sort'] ?? 'latest';
-$minScore    = intval($_GET['min_score'] ?? 0);
-$minSupport  = intval($_GET['min_support'] ?? 0);
+$query = trim($_GET['q'] ?? '');
 
-/* -------------------------
-   BASE QUERY
---------------------------*/
-$sql = "
+if ($query === '') {
+    header("Location: index.html");
+    exit();
+}
+
+/*
+Fetch data
+*/
+$stmt = $conn->prepare("
     SELECT brand, topic, score, num_supporting, updated_at
     FROM brand_topic_scores
-    WHERE 1=1
-";
+    WHERE brand LIKE CONCAT('%', ?, '%')
+       OR topic LIKE CONCAT('%', ?, '%')
+    ORDER BY score DESC
+");
 
-$params = [];
-$types  = "";
-
-/* -------------------------
-   SEARCH FILTER
---------------------------*/
-if ($search !== '') {
-    $sql .= " AND (brand LIKE ? OR topic LIKE ?) ";
-    $like = "%$search%";
-    $params[] = $like;
-    $params[] = $like;
-    $types .= "ss";
-}
-
-/* -------------------------
-   NUMERIC FILTERS
---------------------------*/
-$sql .= " AND score >= ? AND num_supporting >= ? ";
-$params[] = $minScore;
-$params[] = $minSupport;
-$types .= "ii";
-
-/* -------------------------
-   SORTING
---------------------------*/
-if ($sort === 'score') {
-    $sql .= " ORDER BY score DESC ";
-} elseif ($sort === 'support') {
-    $sql .= " ORDER BY num_supporting DESC ";
-} else {
-    $sql .= " ORDER BY updated_at DESC ";
-}
-
-/* -------------------------
-   EXECUTE
---------------------------*/
-$stmt = $conn->prepare($sql);
-$stmt->bind_param($types, ...$params);
+$stmt->bind_param("ss", $query, $query);
 $stmt->execute();
 
 $result = $stmt->get_result();
@@ -73,6 +35,18 @@ while ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 $conn->close();
+
+/*
+Derived values
+*/
+$brand = $rows[0]['brand'] ?? $query;
+
+$total = 0;
+foreach ($rows as $r) {
+    $total += $r['score'];
+}
+
+$avgScore = count($rows) ? round($total / count($rows)) : 0;
 ?>
 
 <!DOCTYPE html>
@@ -82,33 +56,16 @@ $conn->close();
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Ungizwe Listing</title>
+<title><?= htmlspecialchars($brand) ?> | Ungizwe Search</title>
 
-<!-- CSS -->
 <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
 <link href="assets/vendor/aos/aos.css" rel="stylesheet">
 <link href="assets/css/main.css" rel="stylesheet">
 
 <style>
-.hero {
-    padding: 40px 0;
-    text-align: center;
-}
-
-.card-box {
-    border: 0;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    transition: 0.3s;
-}
-
-.card-box:hover {
-    transform: translateY(-5px);
-}
-
-.score {
-    font-size: 40px;
+.hero-score {
+    font-size: 70px;
     font-weight: 800;
     color: #dc3545;
 }
@@ -117,7 +74,20 @@ $conn->close();
     height: 10px;
     border-radius: 20px;
 }
+
+.card-box {
+    border-radius: 16px;
+    border: 0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    padding: 25px;
+    transition: 0.3s;
+}
+
+.card-box:hover {
+    transform: translateY(-5px);
+}
 </style>
+
 </head>
 
 <body>
@@ -145,61 +115,23 @@ $conn->close();
 
 <main class="main">
 
-<!-- PAGE TITLE -->
-<div class="page-title">
-  <div class="container">
-    <h1>Brand Intelligence Listing</h1>
-    <p class="text-muted">Anonymous signals from customers & employees</p>
-  </div>
-</div>
 
-<!-- SEARCH + FILTERS -->
-<section class="section">
-  <div class="container">
 
-    <form method="GET" class="row gy-3 align-items-end">
+<!-- HERO -->
+<section class="section light-background">
+  <div class="container text-center" data-aos="fade-up">
 
-      <div class="col-lg-4">
-        <label>Search</label>
-        <input type="text"
-               name="search"
-               class="form-control"
-               placeholder="Brand or topic..."
-               value="<?= htmlspecialchars($search) ?>">
-      </div>
+    <h2 class="fw-bold"><?= htmlspecialchars($brand) ?></h2>
 
-      <div class="col-lg-3">
-        <label>Sort</label>
-        <select name="sort" class="form-control">
-          <option value="latest" <?= $sort==='latest'?'selected':'' ?>>Latest</option>
-          <option value="score" <?= $sort==='score'?'selected':'' ?>>Highest Score</option>
-          <option value="support" <?= $sort==='support'?'selected':'' ?>>Most Supported</option>
-        </select>
-      </div>
+    <p class="text-muted">Anonymous Brand Intelligence Signal</p>
 
-      <div class="col-lg-2">
-        <label>Min Score</label>
-        <input type="number"
-               name="min_score"
-               class="form-control"
-               value="<?= $minScore ?>">
-      </div>
+    <div class="hero-score">
+      <?= $avgScore ?>/100
+    </div>
 
-      <div class="col-lg-2">
-        <label>Min Votes</label>
-        <input type="number"
-               name="min_support"
-               class="form-control"
-               value="<?= $minSupport ?>">
-      </div>
-
-      <div class="col-lg-1">
-        <button class="btn btn-primary w-100">
-          <i class="bi bi-search"></i>
-        </button>
-      </div>
-
-    </form>
+    <p>
+      Based on <strong><?= count($rows) ?></strong> anonymous signals
+    </p>
 
   </div>
 </section>
@@ -208,39 +140,61 @@ $conn->close();
 <section class="section">
   <div class="container">
 
+    <div class="section-title" data-aos="fade-up">
+      <h2>Topic Breakdown</h2>
+      <p>AI-generated insights from anonymous customer and employee reports</p>
+    </div>
+
     <div class="row gy-4">
 
       <?php if (count($rows) === 0): ?>
 
         <div class="col-12 text-center">
-          <h4>No results found.</h4>
+          <h4>No matching insights found.</h4>
         </div>
 
       <?php else: ?>
 
-        <?php foreach ($rows as $r): ?>
+        <?php foreach ($rows as $row): ?>
 
-        <div class="col-lg-6">
+        <div class="col-lg-6" data-aos="fade-up">
 
-          <div class="card card-box p-4">
+          <div class="card-box">
 
-            <h3><?= htmlspecialchars($r['brand']) ?></h3>
-            <h5 class="text-muted"><?= htmlspecialchars($r['topic']) ?></h5>
+            <h3><?= htmlspecialchars($row['topic']) ?></h3>
 
-            <div class="score mt-3">
-              <?= round($r['score']) ?>/100
-            </div>
+            <h4 class="mt-2">
+              <?= round($row['score']) ?> / 100
+            </h4>
 
-            <div class="progress mt-2">
+            <div class="progress mb-3">
               <div class="progress-bar bg-danger"
-                   style="width: <?= min($r['score'],100) ?>%">
+                   style="width: <?= min($row['score'],100) ?>%">
               </div>
             </div>
 
-            <div class="mt-3 text-muted">
-              <?= $r['num_supporting'] ?> anonymous signals •
-              Updated <?= $r['updated_at'] ?>
-            </div>
+            <ul class="list-unstyled">
+              <li>
+                <i class="bi bi-check"></i>
+                <?= $row['num_supporting'] ?> anonymous signals
+              </li>
+              <li>
+                <i class="bi bi-clock"></i>
+                Updated <?= $row['updated_at'] ?>
+              </li>
+            </ul>
+
+            <!-- VOTE BUTTON -->
+            <form action="vote.php" method="post" class="mt-3">
+
+              <input type="hidden" name="brand" value="<?= htmlspecialchars($row['brand']) ?>">
+              <input type="hidden" name="topic" value="<?= htmlspecialchars($row['topic']) ?>">
+
+              <button type="submit" class="btn btn-success btn-sm w-100">
+                👍 Agree with signal (<?= $row['num_supporting'] ?>)
+              </button>
+
+            </form>
 
           </div>
 
@@ -254,6 +208,31 @@ $conn->close();
 
   </div>
 </section>
+
+<div class="container">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+
+        <a href="listing.php" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> All Listings
+        </a>
+
+        <form action="search.php" method="get" class="d-flex" style="max-width:400px;">
+            <input
+                type="text"
+                name="q"
+                class="form-control"
+                placeholder="Search another brand..."
+                value="<?= htmlspecialchars($query) ?>">
+
+            <button class="btn btn-primary ms-2">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+
+    </div>
+
+</div>
 
 </main>
 <!-- Main Footer -->

@@ -85,14 +85,6 @@ if (empty($recent_brands)) {
 
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
-
-  <!-- =======================================================
-  * Template Name: Arsha
-  * Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
-  * Updated: Feb 22 2025 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body class="blog-details-page">
@@ -108,11 +100,11 @@ if (empty($recent_brands)) {
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="#hero" class="active">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#team">Team</a></li>
-          <li><a href="#pricing">Pricing</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="index.html#hero" class="active">Home</a></li>
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="index.html#team">Team</a></li>
+          <li><a href="index.html#pricing">Pricing</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -153,6 +145,36 @@ if (empty($recent_brands)) {
       <div class="form-header">
         <h3>Submit a Cry for Help</h3>
         <p>Share your experience anonymously. Each submission is stored as a raw signal in our system for analysis and pattern detection.</p>
+        <h4>Privacy & Fair Use</h4>
+        <p>
+
+Your submission is completely anonymous and will never be linked to your identity. By submitting a signal, you confirm that it reflects your genuine experience or opinion and is provided in good faith.
+
+Ungizwe is an independent platform that aggregates anonymous submissions using AI to identify recurring themes and trends. Individual submissions are not presented as verified facts or allegations, and published insights represent aggregated community sentiment rather than the views of Ungizwe.
+
+Please do not include confidential information, personal information, or defamatory, abusive, or unlawful content.
+</p>
+<div class="col-12 mt-3">
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      value="1"
+      id="consentCheck"
+      name="consent"
+      required
+    >
+
+<label class="form-check-label" for="consentCheck">
+  I confirm that this submission reflects my honest experience or opinion.
+  I understand it will be anonymised and analysed as part of aggregated brand insights.
+</label>
+
+
+  </div>
+</div>
+
+
       </div>
 
       <div class="row gy-3">
@@ -195,15 +217,15 @@ if (empty($recent_brands)) {
           <div class="widgets-container" data-aos="fade-up" data-aos-delay="200">
 
             <!-- Search Widget -->
-            <div class="search-widget widget-item">
-
-              <h3 class="widget-title">Search</h3>
-              <form action="">
-                <input type="text">
-                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-              </form>
-
-            </div><!--/Search Widget -->
+  <div class="search-widget widget-item">
+    <h3 class="widget-title">Search</h3>
+    <form action="search.php" method="get">
+      <input type="text" name="q" placeholder="Search..." autocomplete="off" required>
+      <button type="submit" title="Search">
+        <i class="bi bi-search"></i>
+      </button>
+    </form>
+  </div>
 
             <!-- Recent Posts Widget -->
             <div class="recent-posts-widget widget-item p-3 rounded-4 shadow-sm bg-white">
@@ -303,29 +325,7 @@ if (empty($recent_brands)) {
                         Get insights on brand sentiment, community signals, and platform updates.
                     </p>
 
-                    <form action="forms/newsletter.php" method="post" class="php-email-form mt-3">
 
-                        <div class="input-group">
-
-                            <input type="email"
-                                   name="email"
-                                   class="form-control"
-                                   placeholder="Enter your email"
-                                   required>
-
-                            <button class="btn btn-dark" type="submit">
-                                Subscribe
-                            </button>
-
-                        </div>
-
-                        <div class="loading mt-2 small text-muted">Loading...</div>
-                        <div class="error-message small text-danger"></div>
-                        <div class="sent-message small text-success">
-                            Subscription successful.
-                        </div>
-
-                    </form>
 
                 </div>
 
@@ -357,33 +357,6 @@ if (empty($recent_brands)) {
 
             </div>
 
-            <!-- Navigation -->
-            <div class="col-lg-2 col-md-3">
-
-                <h5 class="fw-semibold">Platform</h5>
-
-                <ul class="list-unstyled mt-3">
-                    <li><a href="#" class="text-decoration-none text-muted">Home</a></li>
-                    <li><a href="#" class="text-decoration-none text-muted">Dashboard</a></li>
-                    <li><a href="#" class="text-decoration-none text-muted">Submit Cry</a></li>
-                    <li><a href="#" class="text-decoration-none text-muted">Analytics</a></li>
-                </ul>
-
-            </div>
-
-            <!-- Services -->
-            <div class="col-lg-2 col-md-3">
-
-                <h5 class="fw-semibold">Insights</h5>
-
-                <ul class="list-unstyled mt-3">
-                    <li><a href="#" class="text-decoration-none text-muted">Brand Signals</a></li>
-                    <li><a href="#" class="text-decoration-none text-muted">Trend Detection</a></li>
-                    <li><a href="#" class="text-decoration-none text-muted">Sentiment Score</a></li>
-                    <li><a href="#" class="text-decoration-none text-muted">Reports</a></li>
-                </ul>
-
-            </div>
 
             <!-- Social -->
             <div class="col-lg-4 col-md-12">

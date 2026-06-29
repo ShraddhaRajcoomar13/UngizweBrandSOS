@@ -23,6 +23,10 @@ if (empty($brand) || empty($cry)) {
     die("Brand and Cry are required.");
 }
 
+if (!isset($_POST['consent'])) {
+    die("You must acknowledge the submission terms.");
+}
+
 // Prepare SQL (safe insert)
 $stmt = $conn->prepare("INSERT INTO criestb (brand, cry) VALUES (?, ?)");
 $stmt->bind_param("ss", $brand, $cry);

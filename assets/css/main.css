@@ -1545,48 +1545,50 @@ section,
 /*--------------------------------------------------------------
 # Team Section
 --------------------------------------------------------------*/
+
 .team .team-member {
-  background-color: var(--surface-color);
+  background: var(--surface-color);
   box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
-  position: relative;
-  border-radius: 5px;
-  transition: 0.5s;
+  border-radius: 10px;
+  transition: all 0.3s ease;
   padding: 30px;
   height: 100%;
+  display: flex;
+  align-items: flex-start;
 }
 
-@media (max-width: 468px) {
-  .team .team-member {
-    flex-direction: column;
-    justify-content: center !important;
-    align-items: center !important;
-  }
+.team .team-member:hover {
+  transform: translateY(-8px);
 }
 
+/* Profile Image */
 .team .team-member .pic {
-  overflow: hidden;
   width: 150px;
+  height: 150px;
+  min-width: 150px;
+  overflow: hidden;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .team .team-member .pic img {
-  transition: ease-in-out 0.3s;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
 }
 
-.team .team-member:hover {
-  transform: translateY(-10px);
+.team .team-member:hover .pic img {
+  transform: scale(1.05);
 }
 
+/* Member Info */
 .team .team-member .member-info {
   padding-left: 30px;
-}
-
-@media (max-width: 468px) {
-  .team .team-member .member-info {
-    padding: 30px 0 0 0;
-    text-align: center;
-  }
+  flex: 1;
 }
 
 .team .team-member h4 {
@@ -1597,63 +1599,55 @@ section,
 
 .team .team-member span {
   display: block;
-  font-size: 15px;
-  padding-bottom: 10px;
   position: relative;
+  font-size: 15px;
   font-weight: 500;
+  padding-bottom: 10px;
 }
 
 .team .team-member span::after {
   content: "";
   position: absolute;
-  display: block;
-  width: 50px;
-  height: 1px;
-  background: color-mix(in srgb, var(--default-color), transparent 85%);
-  bottom: 0;
   left: 0;
-}
-
-@media (max-width: 468px) {
-  .team .team-member span::after {
-    left: calc(50% - 25px);
-  }
+  bottom: 0;
+  width: 50px;
+  height: 2px;
+  background: color-mix(in srgb, var(--accent-color), transparent 30%);
 }
 
 .team .team-member p {
-  margin: 10px 0 0 0;
+  margin-top: 12px;
+  margin-bottom: 0;
   font-size: 14px;
+  line-height: 1.7;
 }
 
+/* Social Icons */
 .team .team-member .social {
-  margin-top: 12px;
   display: flex;
   align-items: center;
-  justify-content: start;
-  width: 100%;
-}
-
-@media (max-width: 468px) {
-  .team .team-member .social {
-    justify-content: center;
-  }
+  margin-top: 18px;
 }
 
 .team .team-member .social a {
-  background: color-mix(in srgb, var(--default-color), transparent 94%);
-  transition: ease-in-out 0.3s;
+  width: 36px;
+  height: 36px;
+  margin-right: 8px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50px;
-  width: 36px;
-  height: 36px;
+  background: color-mix(in srgb, var(--default-color), transparent 94%);
+  transition: all 0.3s ease;
+}
+
+.team .team-member .social a:last-child {
+  margin-right: 0;
 }
 
 .team .team-member .social a i {
-  color: color-mix(in srgb, var(--default-color), transparent 20%);
   font-size: 16px;
-  margin: 0 2px;
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
 }
 
 .team .team-member .social a:hover {
@@ -1664,10 +1658,36 @@ section,
   color: var(--contrast-color);
 }
 
-.team .team-member .social a+a {
-  margin-left: 8px;
-}
+/* Mobile */
+@media (max-width: 768px) {
 
+  .team .team-member {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .team .team-member .member-info {
+    padding-left: 0;
+    padding-top: 25px;
+  }
+
+  .team .team-member span::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .team .team-member .social {
+    justify-content: center;
+  }
+
+  .team .team-member .pic {
+    width: 140px;
+    height: 140px;
+    min-width: 140px;
+  }
+
+}
 /*--------------------------------------------------------------
 # Pricing Section
 --------------------------------------------------------------*/
